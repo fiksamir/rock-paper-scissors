@@ -129,18 +129,29 @@ fn main() {
     println!("Привіт, нумо пограємо в Камінь Ножиці Папір!");
     println!("Переможе той, хто першим виграє 3 раунди.");
  
-    let mut player_wins = 0;
-    let mut comp_wins = 0;
-    let mut quit = false;
+    let mut player_wins: i32 = 0;
+    let mut comp_wins: i32 = 0;
+    let mut round:i32  = 1;
+    let mut quit: bool = false;
 
-    'game: loop { //game       
+    'game: loop { // гра       
 
-        loop{ //round
+        'round: loop{ // раунд
+
+            println!("Раунд {}:", round);
+
             let comp_move: RockPaperScissorsGuess = rand::thread_rng().gen();
 
             print!("Будь ласка, обери (к)амінь, (п)апір, або (н)ожиці:");
 
-            let _ = io::stdout().flush();
+            let _ = match io::stdout().flush() {
+                Ok(str) => str,
+                Err(_) => {
+                    println!("Помилка консолі.\n");
+                    quit = true;
+                    break 'game;
+                }
+            };
             
             let mut player_move = String::new();
 
@@ -156,9 +167,10 @@ fn main() {
                     println!("");
                     println!("Ти обрав {}", player_move_val);
                     println!("Я обрав {}", comp_move);
+                    round += 1;
                     player_move_val
                 },
-                Err(ParseRockPaperScissorsGuessError::Unknown(s)) => {
+                Err(ParseRockPaperScissorsGuessError::Unknown(s)) => {  // перевірка виходу з гри
                     match &s[..] {
                         "q" | "quit" | "в" | "вихід" => {
                             println!("Вже йдеш? Добре.");
@@ -167,7 +179,7 @@ fn main() {
                         },
                         _            => {
                             println!("\"{}\" не вірний вибір, спробуй ще раз.\n",s);
-                            continue
+                            continue 'round
                         },
                     }
                 }            
@@ -179,25 +191,26 @@ fn main() {
                 RockPaperScissorsResult::Win(_) => {
                     player_wins += 1;
                     println!("{}", result);
-                    println!("Ти виграв цей раунд.");
+                    println!("Ти виграв цей раунд.\n");
                 },
-                RockPaperScissorsResult::Tie(_) => println!("Нічия..."),
+                RockPaperScissorsResult::Tie(_) => println!("Нічия...\n"),
                 RockPaperScissorsResult::Loss(_) => {
                     comp_wins += 1;
                     println!("{}", result);
-                    println!("Ти програв цей раунд.");
+                    println!("Ти програв цей раунд.\n");
                 },
             }
-            break;
+            break 'round;
         }
+        //кінець раунду
 
-        println!("");
+        // перевірка рахунку
         if player_wins == 3 {
             println!("Вітаю, ти переможець у грі!\n");
-            break;
+            break 'game;
         } else if comp_wins == 3 {
             println!("На жаль...Ти програв цю гру! Щасти наступного разу.\n");
-            break;
+            break 'game;
         } else {
             println!("У тебе {} перемог, у мене - {}.\n", player_wins, comp_wins);           
         }
