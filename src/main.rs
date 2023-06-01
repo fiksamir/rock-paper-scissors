@@ -35,9 +35,9 @@ pub trait Compare<T, U> {
 impl fmt::Display for RockPaperScissorsGuess {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            RockPaperScissorsGuess::Rock    => write!(f, "Rock"),
-            RockPaperScissorsGuess::Paper   => write!(f, "Paper"),
-            RockPaperScissorsGuess::Scissors => write!(f, "Scissors"),
+            RockPaperScissorsGuess::Rock    => write!(f, "Камінь"),
+            RockPaperScissorsGuess::Paper   => write!(f, "Папір"),
+            RockPaperScissorsGuess::Scissors => write!(f, "Ножиці"),
         }
     }
 }
@@ -58,9 +58,9 @@ impl str::FromStr for RockPaperScissorsGuess {
     type Err = ParseRockPaperScissorsGuessError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "r" | "rock"    => Ok(RockPaperScissorsGuess::Rock),
-            "p" | "paper"   => Ok(RockPaperScissorsGuess::Paper),
-            "s" | "scissors" => Ok(RockPaperScissorsGuess::Scissors),
+            "к" | "камінь"    => Ok(RockPaperScissorsGuess::Rock),
+            "п" | "папір"   => Ok(RockPaperScissorsGuess::Paper),
+            "н" | "ножиці" => Ok(RockPaperScissorsGuess::Scissors),
             _   => Err(ParseRockPaperScissorsGuessError::Unknown(s.to_string())),
         }
     }
@@ -108,16 +108,16 @@ impl fmt::Display for RockPaperScissorsResult {
         match self {
             RockPaperScissorsResult::Win(result) => {
                 match result {
-                    RockPaperScissorsCompare::RockCrushesScissors => write!(f, "Rock crushes scissors"),
-                    RockPaperScissorsCompare::PaperCoversRock => write!(f, "Paper covers rock"),
-                    RockPaperScissorsCompare::ScissorsCutPaper => write!(f, "Scissors cut paper"),
+                    RockPaperScissorsCompare::RockCrushesScissors => write!(f, "Камінь ламає ножиці"),
+                    RockPaperScissorsCompare::PaperCoversRock => write!(f, "Папір покриває камінь"),
+                    RockPaperScissorsCompare::ScissorsCutPaper => write!(f, "Ножиці ріжуть папір"),
                 }
             },
             RockPaperScissorsResult::Loss(result) => {
                 match result {
-                    RockPaperScissorsCompare::RockCrushesScissors => write!(f, "Rock crushes scissors"),
-                    RockPaperScissorsCompare::PaperCoversRock => write!(f, "Paper covers rock"),
-                    RockPaperScissorsCompare::ScissorsCutPaper => write!(f, "Scissors cut paper"),
+                    RockPaperScissorsCompare::RockCrushesScissors => write!(f, "Камінь ламає ножиці"),
+                    RockPaperScissorsCompare::PaperCoversRock => write!(f, "Папір покриває камінь"),
+                    RockPaperScissorsCompare::ScissorsCutPaper => write!(f, "Ножиці ріжуть папір"),
                 }
             },
             RockPaperScissorsResult::Tie(result) => write!(f, "{result}"),
@@ -126,8 +126,8 @@ impl fmt::Display for RockPaperScissorsResult {
 }
 
 fn main() {
-    println!("Hello, Lets play Rock, Paper, Scissors!");
-    println!("Let's play best 3 out of 5 rounds.");
+    println!("Привіт, нумо пограємо в Камінь Ножиці Папір!");
+    println!("Переможе той, хто першим виграє 3 раунди.");
  
     let mut player_wins = 0;
     let mut comp_wins = 0;
@@ -138,7 +138,7 @@ fn main() {
         loop{ //round
             let comp_move: RockPaperScissorsGuess = rand::thread_rng().gen();
 
-            print!("Please select (r)ock, (p)aper, or (s)cissors:");
+            print!("Будь ласка, обери (к)амінь, (п)апір, або (н)ожиці:");
 
             let _ = io::stdout().flush();
             
@@ -146,7 +146,7 @@ fn main() {
 
             io::stdin()
                 .read_line(&mut player_move)
-                .expect("Failed to read line");
+                .expect("Помилка читання");
 
             let player_move: Result<RockPaperScissorsGuess, ParseRockPaperScissorsGuessError>
                 = player_move.trim().parse();
@@ -154,19 +154,19 @@ fn main() {
             let player_move = match player_move {
                 Ok(player_move_val) => {
                     println!("");
-                    println!("You chose {}", player_move_val);
-                    println!("I chose {}", comp_move);
+                    println!("Ти обрав {}", player_move_val);
+                    println!("Я обрав {}", comp_move);
                     player_move_val
                 },
                 Err(ParseRockPaperScissorsGuessError::Unknown(s)) => {
                     match &s[..] {
-                        "q" | "quit" => {
-                            println!("Quit? Okay.");
+                        "q" | "quit" | "в" | "вихід" => {
+                            println!("Вже йдеш? Добре.");
                             quit = true;
                             break 'game;
                         },
                         _            => {
-                            println!("\"{}\" is not a valid guess, try again.\n",s);
+                            println!("\"{}\" не вірний вибір, спробуй ще раз.\n",s);
                             continue
                         },
                     }
@@ -179,13 +179,13 @@ fn main() {
                 RockPaperScissorsResult::Win(_) => {
                     player_wins += 1;
                     println!("{}", result);
-                    println!("You won this round.");
+                    println!("Ти виграв цей раунд.");
                 },
-                RockPaperScissorsResult::Tie(_) => println!("Tie..."),
+                RockPaperScissorsResult::Tie(_) => println!("Нічия..."),
                 RockPaperScissorsResult::Loss(_) => {
                     comp_wins += 1;
                     println!("{}", result);
-                    println!("You lost this round.");
+                    println!("Ти програв цей раунд.");
                 },
             }
             break;
@@ -193,17 +193,17 @@ fn main() {
 
         println!("");
         if player_wins == 3 {
-            println!("Congratulations, You won the game!\n");
+            println!("Вітаю, ти переможець у грі!\n");
             break;
         } else if comp_wins == 3 {
-            println!("Too bad...You lost the game! Better luck next time.\n");
+            println!("На жаль...Ти програв цю гру! Щасти наступного разу.\n");
             break;
         } else {
-            println!("You have {} wins, and I have {} wins.\n", player_wins, comp_wins);           
+            println!("У тебе {} перемог, у мене - {}.\n", player_wins, comp_wins);           
         }
     }
 
     if quit == true {
-        println!("Well... thanks for playing. Sorry you had to leave so soon.");
+        println!("Що ж... дякую за гру. Шкода, що ти йдеш так швидко.");
     }
 }
